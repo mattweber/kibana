@@ -217,22 +217,19 @@ function (angular, app, _, kbn, moment) {
       };
 
 
-      var nodeInfo = $scope.ejs.client.get('/' + dashboard.indices + '/_mapping/field/' + field,
-        undefined, undefined, function(data, status) {
-        console.log(status);
-        return;
-      });
-
+      var nodeInfo = es.indices.getFieldMapping({ index: dashboard.indices, field : field });
       return nodeInfo.then(function(p) {
         var types = _.uniq(jsonPath(p, '*.*.*.*.mapping.*.type'));
         if (_.isArray(types)) {
           $scope.micropanel.type = types.join(', ');
         }
 
-
         if(_.intersection(types, ['long','float','integer','double']).length > 0) {
           $scope.micropanel.hasStats =  true;
         }
+      },
+      function(err) {
+        console.log(err.status);
       });
 
     };
