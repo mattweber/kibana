@@ -365,9 +365,11 @@ function (angular, $, kbn, _, config, ejs, moment, Modernizr) {
         return false;
       };
 
-      ejs.client.get(
-        "/" + config.kibana_index + "/"+type+"/"+id+'?' + new Date().getTime(),
-        null, successcb, errorcb);
+      es.get({
+        index: config.kibana_index,
+        type: type,
+        id: id
+      }).then(successcb, errorcb);
 
     };
 
